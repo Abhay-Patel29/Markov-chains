@@ -1,0 +1,47 @@
+import random
+
+def build_markov_chain(text, n=1):
+    
+    words = text.split()
+    chain = {}
+    
+    for i in range(len(words) - n):
+        
+        state = tuple(words[i:i+n])
+        next_word = words[i+n]
+        
+        if state not in chain:
+            chain[state] = []
+        chain[state].append(next_word)
+    
+    return chain
+
+def generate_text(chain, length=20):
+   
+    state = random.choice(list(chain.keys()))
+    output = list(state)
+    
+    for _ in range(length - len(state)):
+        next_words = chain.get(state)
+        if not next_words:  
+            break
+        next_word = random.choice(next_words)
+        output.append(next_word)
+        
+       
+        state = tuple(output[-len(state):])
+    
+    return " ".join(output)
+
+
+text_data = """
+The sun rises in the east and sets in the west.
+The moon shines brightly at night while the stars twinkle.
+The sun is bright and warm.
+"""
+
+# Build a 2-word state chain (bi-gram model)
+markov_chain = build_markov_chain(text_data, n=2)
+
+# Generate text
+print(generate_text(markov_chain, length=15))
